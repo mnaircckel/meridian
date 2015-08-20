@@ -31,6 +31,8 @@ var distance_speed_mod = 1200
 var x_offset = -350
 var y_offset = -350
 
+var cull_distance = 4000
+
 
 func set_alive(enable):
 	is_alive = enable
@@ -96,7 +98,9 @@ func track_player(delta):
 	
 	set_rot(angle)
 	attack_timer += delta
-	if distance > attack_distance:
+	if distance > cull_distance:
+		get_parent().remove_child(self)
+	elif distance > attack_distance:
 		move(-current_speed.normalized()*enemy_speed/speed_modify*delta)
 	else:
 		if attack_timer > attack_interval:
