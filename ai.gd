@@ -26,7 +26,7 @@ var sprite_index = 0
 
 var tracking_angle = PI/3
 var current_tracking_angle = 0
-var distance_speed_mod = 1200
+var distance_speed_mod = 1600
 
 var x_offset = -350
 var y_offset = -350
