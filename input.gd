@@ -10,6 +10,9 @@ func _ready():
 
 func _fixed_process(delta):
 	pause_timer += delta
+	if(Input.is_action_pressed("exit")):
+		OS.get_main_loop().quit()
+
 	if pause_timer > pause_interval:
 		if Input.is_action_pressed("pause"):
 			pause_timer = 0

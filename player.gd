@@ -23,6 +23,20 @@ var sprint_multi = 1
 
 var sprite_index = 0
 
+var max_level = 14
+var current_level = 1
+var experience = 0
+var levels_by_exp = [0, 100, 225, 385, 590, 850, 1175, 1575, 2060, 2640, 3325, 4125, 5050, 6110, 7500]
+
+func get_level():
+	return current_level
+
+func get_experience():
+	return experience
+
+func get_levels_by_exp():
+	return levels_by_exp
+
 func get_health():
 	return health
 
@@ -34,6 +48,43 @@ func get_energy():
 
 func get_max_energy():
 	return max_energy
+
+func grant_experience(amount):
+	experience += amount
+
+func check_for_level_up():
+	
+	if current_level < max_level and experience > levels_by_exp[current_level]:
+		current_level += 1
+		
+		if current_level == 2:
+			max_health *= 1.15
+			
+		elif current_level == 3:
+			get_node("Gun").bullet_speed *= 1.5
+			
+		elif current_level == 4:
+			max_energy *= 1.1
+			
+		elif current_level == 5:
+			get_node("Gun").fire_rate /= 1.1
+			get_node("Gun").knockback /= 1.1
+			
+		elif current_level == 6:
+			sprint_speed *= 1.1
+			
+		elif current_level == 7:
+			player_speed *= 1.10
+
+		elif current_level == 8:
+			get_node("Gun").damage *= 1.5
+		
+		elif current_level == 9:
+			max_health *= 1.15
+
+		elif current_level == 10:
+			player_speed /= 1.05
+			max_energy *= 1.15
 	
 func heal_damage(amount):
 	health += amount
@@ -47,9 +98,9 @@ func take_damage(amount):
 
 func check_alive():
 	if health <= 0:
-		health = 0
-		is_alive = false
-		get_tree().set_pause(true)
+		health = max_health
+		energy = max_energy
+		set_pos(Vector2(50,50))
 
 func _ready():
 	energy = max_energy
@@ -59,6 +110,7 @@ func _ready():
 func _fixed_process(delta):
 	
 	check_alive()
+	check_for_level_up()
 	
 	walking_timer += delta 
 	

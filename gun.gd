@@ -7,6 +7,12 @@ export var damage = 25
 
 var variance = PI/80
 
+var knockback = 18
+
+
+# Angles fun fires at - default is 0, or straight forward
+var angles = [0]
+
 var fire_timer = 0
 var player_rot
 var player_pos
@@ -19,14 +25,14 @@ var bullets = []
 var old_bullets = []
 
 
-func shoot():
+func shoot(shoot_angle):
 	player_pos = get_parent().get_pos()
 	player_rot = get_parent().get_rot()
 	
 	var new_bullet = RigidBody2D.new()
 	var new_bullet_sprite = Sprite.new()
 	
-	var angle = player_rot-PI/2 + rand_range(-1,1)*variance
+	var angle = (player_rot-PI/2) + shoot_angle + (rand_range(-1,1)*variance)
 	var direction_vector = Vector2(cos(angle),-sin(angle)).normalized()
 	var location_vector = player_pos+direction_vector*forward_offset
 	
@@ -47,7 +53,7 @@ func shoot():
 	new_bullet.set_gravity_scale(0)
 	new_bullet.set_linear_velocity(direction_vector * bullet_speed)
 	
-	get_parent().move(-direction_vector * new_bullet.get_mass())
+	get_parent().move(-direction_vector * knockback)
 	
 	get_node("Sounds").play("fire")
 	get_parent().get_node("Camera2D").set_pos(Vector2(get_pos().x+rand_range(-8,8),get_pos().y+rand_range(-8,8)))
@@ -76,6 +82,7 @@ func _process(delta):
 	if Input.is_action_pressed("fire"):
 		if fire_timer > fire_rate:
 			fire_timer = 0
-			shoot()
+			for shoot_angle in angles:
+				shoot(shoot_angle)
 
 

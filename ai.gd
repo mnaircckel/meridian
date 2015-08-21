@@ -4,6 +4,8 @@ extends KinematicBody2D
 export var enemy_speed = 170
 export var max_health = 100
 
+export var exp_given = 4
+
 export var damage = 4
 var attack_distance = 100
 var run_distance = 250
@@ -124,6 +126,8 @@ func track_player(delta):
 
 func check_health():
 	if health <= 0:
+		var player = get_tree().get_root().get_node("World").get_node("Player")
+		player.grant_experience(exp_given)
 		health = 0
 		sprite_index = 5
 		get_node("Sprite").set_frame(sprite_index)
