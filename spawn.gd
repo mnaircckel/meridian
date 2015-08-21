@@ -15,8 +15,6 @@ func _ready():
 
 func _fixed_process(delta):
 
-
-	print(current_spawn_interval)
 	spawn_timer += delta
 		
 	var spawn_direction = get_parent().get_node("Player").get_rot()-PI/2+rand_range(-1,1)*angle_var
@@ -42,6 +40,7 @@ func _fixed_process(delta):
 		var new_monster = get_node("Zombie").duplicate()
 		new_monster.set_alive(true)
 		new_monster.show()
+		new_monster.set_z(-1)
 		var monster_position = get_parent().get_node("Player").get_pos()+spawn_offset
 		new_monster.set_pos(monster_position)
 		get_tree().get_root().add_child(new_monster)

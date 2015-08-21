@@ -5,11 +5,14 @@ export var enemy_speed = 170
 export var max_health = 100
 
 export var damage = 4
-var attack_distance = 140
+var attack_distance = 100
 var run_distance = 250
 
 var attack_timer = 0
 var attack_interval = .70
+
+var death_interval = 5
+var death_timer = 0
 
 var health
 
@@ -33,7 +36,6 @@ var y_offset = -350
 
 var cull_distance = 4000
 
-
 func set_alive(enable):
 	is_alive = enable
 
@@ -46,16 +48,27 @@ func check_collisions(delta):
 		if collider in get_tree().get_nodes_in_group("projectiles"):
 			get_tree().get_root().get_node("World").remove_child(collider)
 			if is_alive:
+				get_node("Sounds").play("thud")
 				health -= collider.get_mass()
 		
 	
 func update_anims():
-	if walking_timer > walking_interval:
+
+	if sprite_index > 5:
+		if walking_timer > walking_interval:
+			walking_timer = 0
+			get_node("Sprite").set_frame(sprite_index)
+			sprite_index += 1
+			if sprite_index > 11:
+				sprite_index = 0
+
+	elif walking_timer > walking_interval:
 		walking_timer = 0
 		get_node("Sprite").set_frame(sprite_index)
 		sprite_index += 1
 		if sprite_index > 4:
 			sprite_index = 0
+	
 
 func track_player(delta):
 
@@ -68,10 +81,10 @@ func track_player(delta):
 	var distance = sqrt(pow(delta_x,2)+pow(delta_y,2))
 	var speed_modify = distance/distance_speed_mod
 	
-	if speed_modify < .3:
-		speed_modify = .3
-	if speed_modify > 1.4:
-		speed_modify = 1.4
+	if speed_modify < .38:
+		speed_modify = .38
+	elif speed_modify > 1.3:
+		speed_modify = 1.3
 		
 	walking_timer += delta
 	tracking_timer += delta
@@ -105,12 +118,16 @@ func track_player(delta):
 	else:
 		if attack_timer > attack_interval:
 			attack_timer = 0
+			sprite_index = 6
 			player.take_damage(damage)
 		move(Vector2(0,0))
 
 func check_health():
 	if health <= 0:
 		health = 0
+		sprite_index = 5
+		get_node("Sprite").set_frame(sprite_index)
+		remove_shape(0)
 		is_alive = false
 
 
@@ -120,14 +137,19 @@ func _ready():
 	health = max_health
 
 func _fixed_process(delta):
-	check_collisions(delta)
-	if is_alive:
+	if !is_alive:
+		move(Vector2(0,0))
+		sprite_index += 1
+		death_timer += delta
 		check_health()
+	
+	if is_alive:
 		update_anims()
+		check_collisions(delta)
 		track_player(delta)
-	if !is_alive and health <= 0:
-		#move(Vector2(0,0))
-		# Temporary until dealth anim etc
+		check_health()
+		
+	if !is_alive and death_timer >= death_interval and health <= 0:
 		free()
 
 

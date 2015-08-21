@@ -41,6 +41,7 @@ func heal_damage(amount):
 		health = max_health
 
 func take_damage(amount):
+	get_node("Sounds").play("hurt")
 	health -= amount
 	check_alive()
 
@@ -101,6 +102,7 @@ func _fixed_process(delta):
         var direction = n.slide(current_speed.normalized())
         move(direction*player_speed*delta)
 	move(current_speed.normalized()*player_speed*sprint_multi*delta)
+	get_parent().get_node("Pointer").set_pos(get_viewport().get_mouse_pos()-Vector2(960,540)+get_pos())
 	look_at(get_viewport().get_mouse_pos()-Vector2(960,540)+get_pos())
 	
 	

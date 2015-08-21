@@ -45,8 +45,9 @@ func shoot():
 	
 	new_bullet.add_shape(collider)
 	new_bullet.set_gravity_scale(0)
-	new_bullet.set_linear_damp(2)
 	new_bullet.set_linear_velocity(direction_vector * bullet_speed)
+	
+	get_parent().move(-direction_vector * new_bullet.get_mass())
 	
 	get_node("Sounds").play("fire")
 	get_parent().get_node("Camera2D").set_pos(Vector2(get_pos().x+rand_range(-8,8),get_pos().y+rand_range(-8,8)))
