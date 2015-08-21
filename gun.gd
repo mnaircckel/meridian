@@ -57,9 +57,9 @@ func shoot():
 	
 	
 func _ready():
-	set_fixed_process(true)
+	set_process(true)
 
-func _fixed_process(delta):
+func _process(delta):
 
 	fire_timer += delta
 	

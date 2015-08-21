@@ -41,9 +41,6 @@ func set_alive(enable):
 
 func check_collisions(delta):
 	if is_colliding():
-		var n = get_collision_normal()
-		var direction = n.slide(current_speed.normalized())
-		move(direction*enemy_speed*delta)
 		var collider = get_collider() 
 		if collider in get_tree().get_nodes_in_group("projectiles"):
 			get_tree().get_root().get_node("World").remove_child(collider)
@@ -81,8 +78,8 @@ func track_player(delta):
 	var distance = sqrt(pow(delta_x,2)+pow(delta_y,2))
 	var speed_modify = distance/distance_speed_mod
 	
-	if speed_modify < .38:
-		speed_modify = .38
+	if speed_modify < .34:
+		speed_modify = .34
 	elif speed_modify > 1.3:
 		speed_modify = 1.3
 		
@@ -114,7 +111,10 @@ func track_player(delta):
 	if distance > cull_distance:
 		get_parent().remove_child(self)
 	elif distance > attack_distance:
-		move(-current_speed.normalized()*enemy_speed/speed_modify*delta)
+		if !is_colliding():
+			move(-current_speed.normalized()*enemy_speed/speed_modify*delta)
+		else:
+			move(Vector2(0,0))
 	else:
 		if attack_timer > attack_interval:
 			attack_timer = 0
@@ -127,21 +127,21 @@ func check_health():
 		health = 0
 		sprite_index = 5
 		get_node("Sprite").set_frame(sprite_index)
-		remove_shape(0)
+		set_shape_as_trigger(0, true)
+		set_shape_as_trigger(1, true)
 		is_alive = false
 
 
 func _ready():
-	set_fixed_process(true)
+	set_process(true)
 	enemy_speed *= rand_range(.8,1.2)
 	health = max_health
 
-func _fixed_process(delta):
+func _process(delta):
 	if !is_alive:
 		move(Vector2(0,0))
 		sprite_index += 1
 		death_timer += delta
-		check_health()
 	
 	if is_alive:
 		update_anims()

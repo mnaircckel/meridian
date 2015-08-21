@@ -1,7 +1,7 @@
 extends Node2D
 
 var spawn_timer = 0
-var spawn_interval = 4.0
+var spawn_interval = 3.8
 var min_spawn_interval = .2
 var current_spawn_interval = 0
 
